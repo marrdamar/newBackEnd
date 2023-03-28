@@ -1,8 +1,8 @@
-const db = require("../configs/postgre");
+const productsModel = require("../models/products.model")
 
 const getProducts = async (req, res) => {
     try {
-        const result = await db.query("select * from product");
+        const result = await productsModel.getProducts();
         res.status(200).json({
             data: result.rows,
         })
