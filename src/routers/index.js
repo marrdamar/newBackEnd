@@ -3,7 +3,6 @@ const { Router } = require("express");
 const welcomeRouter = require("./welcome.router");
 //users /users
 const usersRouter = require("./users.route");
-
 //products /products
 const productsRouter = require("./products.route");
 
