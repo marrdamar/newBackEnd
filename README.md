@@ -1,3 +1,6 @@
+
+## Responsibility checklist
+
 |   Method  |             Endpoint              |  Remark   |
 | AUTH      |                                   |           |
 | POST      | /auth                             | Login     |
