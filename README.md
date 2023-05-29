@@ -1,5 +1,5 @@
 
-## Responsibility checklist
+## Endpoints Call
 
 |   Method  |             Endpoint              |  Remark   |
 | --------- | --------------------------------- | --------- |
