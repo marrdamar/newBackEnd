@@ -5,8 +5,8 @@ const promoController = require("../controllers/promos.controller");
 const { checkRole } = require("../middlewares/checkRole");
 const { checkToken } = require("../middlewares/auth");
 
-promosRouter.get("/", promoController.getPromos);
-promosRouter.get("/:promoId", promoController.getPromoDetails);
+promosRouter.get("/", checkToken, promoController.getPromos);
+promosRouter.get("/:promoId", checkToken, promoController.getPromoDetails);
 //failing row contains
 promosRouter.post("/", checkToken, checkRole, promoController.addPromo);
 promosRouter.patch("/:promoId", checkToken, checkRole, promoController.editPromo);
