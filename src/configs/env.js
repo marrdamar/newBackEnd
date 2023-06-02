@@ -5,5 +5,8 @@ module.exports = {
     user : process.env.DB_USER,
     pwd : process.env.DB_PWD,
     serverPort : process.env.SERVER_PORT,
-    jwtSecret : process.env.JWT_SECRET
+    jwtSecret : "FW14",
+    cloudName : process.env.CLOUD_NAME,
+    cloudKey : process.env.CLOUD_KEY,
+    cloudSecret : process.env.CLOUD_SECRET,
 }
