@@ -76,7 +76,7 @@ const createHistories = async (client, body, userId) => {
         JOIN deliveries d ON d.id = h.deliveries_id
         JOIN m_transaction t ON t.history_id = h.id
         JOIN product p ON p.id = t.product_id
-      WHERE h.users_id = $1 AND h.status_id in (1,2) ORDER BY h.id DESC`;
+      WHERE h.users_id = $1 AND h.status_id in (1,2,3) ORDER BY h.id DESC`;
       // const sqlQuery = `SELECT * from history
       //     WHERE users_id = $1`;
       db.query(sqlQuery, [info.id], (error, result) => {
