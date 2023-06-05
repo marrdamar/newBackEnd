@@ -30,6 +30,34 @@ const checkToken = (req, res, next) => {
     });
 };
 
+const blacklistToken = (req, res, next) => {
+    try {
+      const bearerToken = req.header("Authorization");
+      if (!bearerToken) {
+        return res.status(403).json({
+          msg: "Please Login...",
+        });
+      }
+      const token = bearerToken.split(" ")[1];
+      jwt.verify(token, jwtSecret, (err, payload) => {
+        blacklist.push(token);
+        console.log(blacklist);
+        req.authInfo = payload;
+        res.status(200).json({
+          msg: "Logout Success...",
+        });
+      });
+      next();
+    } catch (error) {
+      console.log(error);
+  
+      res.status(500).json({
+        msg: "Internal server Error",
+      });
+    }
+  };
+
 module.exports = {
     checkToken,
+    blacklistToken
 }
