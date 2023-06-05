@@ -200,6 +200,21 @@ const editPassbyForgot = async (req, res) => {
     }
 };
 
+const logout = async (req, res) => {
+    try {
+      // console.log(req.authInfo);
+      await authModel.logout(req.authInfo.id);
+      res.status(200).json({
+        msg: "You Have Been Logout...",
+      });
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({
+        msg: "Internal Server Error...",
+      });
+    }
+  };
 
 
-module.exports = { login, privateAccess, insertUsers, forgotPass, editPassbyForgot, };
+
+module.exports = { login, privateAccess, insertUsers, forgotPass, editPassbyForgot, logout };
