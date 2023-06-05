@@ -20,7 +20,7 @@ const masterRouter = require("./src/routers");
 
 app.use(masterRouter);
 
-app.listen(PORT, '192.168.43.133', () => {
+app.listen(PORT, () => {
     console.log(`Server is running at ${PORT}`);
     console.log(`Welcome`);
 });

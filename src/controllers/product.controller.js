@@ -28,25 +28,27 @@ const response = require ("../utils/response");
 // };
 
 const getProducts = async (req, res) => {
-	try {
-		const { query } = req;
-		const fullUrl = req.protocol + '://' + req.get('host');
-		const result = await productsModel.getProducts(query);
-
-		if (result.rows.length < 1) {
-			return (res, { status: 404, message: "Data Not Found" });
-		}
-
-		const meta = await productsModel.getMetaProducts(query, fullUrl);
-
-		res.status(200).json({
-			data: result.rows,
-			meta,
-		});
-	} catch (err) {
-		console.log(err.message);
-		return (res, { status: 500, message: "Internal Server Error" });
-	}
+  try {
+    const { query } = req;
+    const result = await productsModel.getProducts(query);
+    if (result.rows.length === 0) {
+      res.status(404).json({
+        msg: "Data Not Found... please don't do it again",
+        data: result.rows,
+      });
+      return;
+    }
+    const meta = await productsModel.getMetaProducts(query);
+    res.status(200).json({
+      meta,
+      data: result.rows,
+    });
+  } catch (err) {
+    console.log(err.message);
+    res.status(500).json({
+      msg: "Internal Server Error...",
+    });
+  }
 };
 
 

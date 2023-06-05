@@ -71,7 +71,7 @@ const createHistories = async (client, body, userId) => {
   
   const getHistories = (info) => {
     return new Promise((resolve, reject) => {
-      const sqlQuery = `SELECT DISTINCT ON (h.id) h.id, h.payment_id, d.method, h.created_at, t.product_id, p.names, p.prices, p.image
+      const sqlQuery = `SELECT DISTINCT ON (h.id) h.id, h.status_id, h.payment_id, d.method, h.created_at, t.product_id, p.names, p.prices, p.image
         FROM history h
         JOIN deliveries d ON d.id = h.deliveries_id
         JOIN m_transaction t ON t.history_id = h.id

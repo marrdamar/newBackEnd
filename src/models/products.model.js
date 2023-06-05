@@ -51,62 +51,158 @@ const db = require("../configs/postgre");
 //     });
 // };
 
-const getProducts = (query) => {
+// const getProducts = (query) => {
+// 	return new Promise((resolve, reject) => {
+// 		let order;
+// 		if (query.order === "cheapest") {
+// 			order = "price ASC";
+// 		}
+// 		if (query.order === "priciest") {
+// 			order = "price DESC";
+// 		}
+
+// 		const sql = `select p.id, p.names, p.prices, p.image, c."category_name" as "category_name"
+// 		from product p
+// 		join categories c on p.categories_id = c.id
+// 		${
+// 			query.category === undefined
+// 				? `where p.names ilike $1 or c."category_name" ilike $2`
+// 				: `where p.names ilike $1 and c."category_name" ilike $2`
+// 		}
+// 		order by ${order || "id asc"}
+// 		limit $3
+// 		offset $4`;
+
+// 		const page = query.page || 1;
+// 		const limit = query.limit || 10;
+// 		const offset = (parseInt(page) - 1) * parseInt(limit);
+
+// 		const values = [`%${query.search || ""}%`, `${query.category}%`, `${limit}`, offset];
+
+// 		db.query(sql, values, (error, result) => {
+// 			if (error) {
+// 				reject(error);
+// 				return;
+// 			}
+// 			resolve(result);
+// 		});
+// 	});
+// };
+
+// const getMetaProducts = (query, fullUrl) => {
+// 	return new Promise((resolve, reject) => {
+// 		const sql = "select count (*) as total_data from product";
+// 		db.query(sql, (err, result) => {
+// 			if (err) return reject(err);
+// 			const totalData = parseInt(result.rows[0].total_data);
+// 			const page = query.page || 1;
+// 			const limit = query.limit || 5;
+// 			const totalPage = Math.ceil(totalData / parseInt(limit));
+
+// 			let prev = parseInt(page) === 1 ? null : `${fullUrl}/products?page=${parseInt(page) - 1}`;
+// 			let next = parseInt(page) === totalPage ? null : `${fullUrl}/products?page=${parseInt(page) + 1}`;
+
+// 			const meta = { totalData, prev, next, totalPage };
+// 			resolve(meta);
+// 		});
+// 	});
+// };
+
+const getProducts = (info) => {
 	return new Promise((resolve, reject) => {
-		let order;
-		if (query.order === "cheapest") {
-			order = "price ASC";
+	  let sqlQuery =
+		"SELECT id, categories_id, names, prices, image FROM product WHERE id <> 1";
+	  let parameters = " ";
+	  if (info.search) {
+		parameters += `AND LOWER(names) LIKE LOWER('%${info.search}%') `;
+	  }
+	  if (info.category) {
+		parameters += `AND categories_id = ${info.category} `;
+	  }
+	  if (info.order === "cheapest") {
+		parameters += "ORDER BY prices ASC ";
+	  }
+	  if (info.order === "priciest") {
+		parameters += "ORDER BY prices DESC ";
+	  }
+	  if (!info.order) {
+		parameters += "ORDER BY id ASC";
+	  }
+	  const limit = parseInt(info.limit) || 12;
+	  const page = parseInt(info.page) || 1;
+	  const offset = (page - 1) * limit;
+	  sqlQuery += `${parameters} LIMIT ${limit} OFFSET ${offset}`;
+	  console.log(sqlQuery);
+	  db.query(sqlQuery, (error, result) => {
+		if (error) {
+		  reject(error);
+		  return;
 		}
-		if (query.order === "priciest") {
-			order = "price DESC";
-		}
-
-		const sql = `select p.id, p.names, p.prices, p.image, c."category_name" as "category_name"
-		from product p
-		join categories c on p.categories_id = c.id
-		${
-			query.category === undefined
-				? `where p.names ilike $1 or c."category_name" ilike $2`
-				: `where p.names ilike $1 and c."category_name" ilike $2`
-		}
-		order by ${order || "id asc"}
-		limit $3
-		offset $4`;
-
-		const page = query.page || 1;
-		const limit = query.limit || 10;
-		const offset = (parseInt(page) - 1) * parseInt(limit);
-
-		const values = [`%${query.search || ""}%`, `${query.category}%`, `${limit}`, offset];
-
-		db.query(sql, values, (error, result) => {
-			if (error) {
-				reject(error);
-				return;
-			}
-			resolve(result);
-		});
+		resolve(result);
+	  });
 	});
-};
+  };
 
-const getMetaProducts = (query, fullUrl) => {
+const getMetaProducts = (info) => {
 	return new Promise((resolve, reject) => {
-		const sql = "select count (*) as total_data from product";
-		db.query(sql, (err, result) => {
-			if (err) return reject(err);
-			const totalData = parseInt(result.rows[0].total_data);
-			const page = query.page || 1;
-			const limit = query.limit || 5;
-			const totalPage = Math.ceil(totalData / parseInt(limit));
-
-			let prev = parseInt(page) === 1 ? null : `${fullUrl}/products?page=${parseInt(page) - 1}`;
-			let next = parseInt(page) === totalPage ? null : `${fullUrl}/products?page=${parseInt(page) + 1}`;
-
-			const meta = { totalData, prev, next, totalPage };
-			resolve(meta);
-		});
+	  console.log(info);
+	  let sqlQuery = "SELECT COUNT(*) AS total_data FROM product WHERE id  <> 1";
+	  if (info.search) {
+		sqlQuery += ` AND LOWER(names) LIKE LOWER('%${info.search}%')`;
+	  }
+	  if (info.category) {
+		sqlQuery += ` AND categories_id = ${info.category}`;
+	  }
+	  db.query(sqlQuery, (error, result) => {
+		if (error) {
+		  reject(error);
+		  return;
+		}
+		const totalData = parseInt(result.rows[0].total_data);
+		const limit = parseInt(info.limit) || 12;
+		const page = parseInt(info.page) || 1;
+		const totalPage = Math.ceil(totalData / limit);
+		let next = "";
+		let prev = "";
+		if (page < totalPage) {
+		  next = `/products?page=${page + 1}&limit=${limit}`;
+		  if (info.search) {
+			next += `&search=${info.search}`;
+		  }
+		  if (info.category) {
+			next += `&category=${info.category}`;
+		  }
+		  if (info.order) {
+			next += `&order=${info.order}`;
+		  }
+		} else {
+		  next = null;
+		}
+  
+		if (page > 1) {
+		  prev = `/products?page=${page - 1}&limit=${limit}`;
+		  if (info.search) {
+			prev += `&search=${info.search}`;
+		  }
+		  if (info.category) {
+			prev += `&category=${info.category}`;
+		  }
+		  if (info.order) {
+			prev += `&order=${info.order}`;
+		  }
+		} else {
+		  prev = null;
+		}
+		const meta = {
+		  totalData,
+		  next,
+		  prev,
+		  totalPage,
+		};
+		resolve(meta);
+	  });
 	});
-};
+  };
 
 const insertProducts = (data, fileLink) => {
 	return new Promise((resolve, reject) => {

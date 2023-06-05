@@ -13,58 +13,98 @@ const db = require("../configs/postgre");
 //     })
 // };
 
-const getUsers = (query) => {
-	return new Promise((resolve, reject) => {
-		let order;
-		if (query.order === "asc") {
-			order = "display_name asc";
-		}
-		if (query.order === "desc") {
-			order = "display_name desc";
-		}
+// const getUsers = (query) => {
+// 	return new Promise((resolve, reject) => {
+// 		let order;
+// 		if (query.order === "asc") {
+// 			order = "display_name asc";
+// 		}
+// 		if (query.order === "desc") {
+// 			order = "display_name desc";
+// 		}
 
-		const sql = `SELECT u.email, u.phone_number, p.address, p.display_name, p.first_name, p.last_name, p.birth_date,
-		p.genders
-		FROM profiles p
-		JOIN users u on u.id = p.users_id
-		WHERE u.email ILIKE $1
-		ORDER BY ${order || "p.id asc"}
-		LIMIT $2`;
+// 		const sql = `SELECT u.email, u.phone_number, p.address, p.display_name, p.first_name, p.last_name, p.birth_date,
+// 		p.genders
+// 		FROM profiles p
+// 		JOIN users u on u.id = p.users_id
+// 		WHERE u.email ILIKE $1
+// 		ORDER BY ${order || "p.id asc"}
+// 		LIMIT $2`;
 
-		const values = [`%${query.search || ""}%`, `${query.limit || ""}`];
-		console.log(values)
-		// console.log(sql)
-		// console.log(order)
-		db.query(sql, values, (err, result) => {
-			if (err) {
-				reject(err);
-				return;
-			}
-			resolve(result);
-			console.log(result)
-		});
-	});
+// 		const values = [`%${query.search || ""}%`, `${query.limit || ""}`];
+// 		console.log(values)
+// 		// console.log(sql)
+// 		// console.log(order)
+// 		db.query(sql, values, (err, result) => {
+// 			if (err) {
+// 				reject(err);
+// 				return;
+// 			}
+// 			resolve(result);
+// 			console.log(result)
+// 		});
+// 	});
+// };
+
+const getUsers = (info) => {
+    return new Promise((resolve, reject) => {
+        let showData = "SELECT * FROM users ORDER BY id ";
+        let order = "ASC LIMIT 5 OFFSET 0";
+        if(info.page) {
+            if(info.page == "all") {
+                order = "ASC";
+            } else {
+                let offset = parseInt(info.page);
+                let page = (offset - 1) * 5;
+                order = `ASC LIMIT 5 OFFSET ${page}`;
+            }
+        }
+        showData += order;
+        db.query(showData, (error, result) => {
+            if(error) {
+                reject(error);
+                return;
+            }
+            resolve(result);
+        });
+    });
 };
 
-const getUserDetail = (params) => {
-	return new Promise((resolve, reject) => {
-		const sql = `SELECT u.email, u.phone_number, p.address, p.display_name, p.first_name, p.last_name, p.birth_date,
-		p.genders
-		FROM profiles p
-		JOIN users u on u.id = p.users_id
-		WHERE u.id = $1`;
-		const values = [params.userId];
+// const getUserDetail = (params) => {
+// 	return new Promise((resolve, reject) => {
+// 		const sql = `SELECT u.email, u.phone_number, p.address, p.display_name, p.first_name, p.last_name, p.birth_date,
+// 		p.genders
+// 		FROM profiles p
+// 		JOIN users u on u.id = p.users_id
+// 		WHERE u.id = $1`;
+// 		const values = [params.userId];
 
-		db.query(sql, values, (error, result) => {
-			if (error) {
-				reject(error);
-				return;
-			}
-			resolve(result);
-		});
-	});
+// 		db.query(sql, values, (error, result) => {
+// 			if (error) {
+// 				reject(error);
+// 				return;
+// 			}
+// 			resolve(result);
+// 		});
+// 	});
+// };
+
+const getUserDetail = (info) => {
+    return new Promise((resolve, reject) => {
+
+        const pick = "u.id, email, password, phone_number, ub.display_name, ub.first_name, ub.last_name, ub.address, ub.birth_date, ub.genders";
+        const table = "users u JOIN profiles ub ON ub.users_id = u.id";
+        const showData = `SELECT ${pick} FROM ${table} WHERE u.id = $1`;
+        const values = [info.userId];
+        db.query(showData, values, (error, result) => {
+            if(error) {
+                reject(error);
+                return;
+            }
+            resolve(result);
+        });
+    });
 };
-
 
 const updateUserData = (params, data, fileLink) => {
 	return new Promise((resolve, reject) => {
