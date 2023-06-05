@@ -76,10 +76,11 @@ const createHistories = async (client, body, userId) => {
         JOIN deliveries d ON d.id = h.deliveries_id
         JOIN m_transaction t ON t.history_id = h.id
         JOIN product p ON p.id = t.product_id
-      WHERE h.users_id = $1 ORDER BY h.id DESC`;
+      WHERE h.users_id = $1 AND h.status_id in (1,2) ORDER BY h.id DESC`;
       // const sqlQuery = `SELECT * from history
       //     WHERE users_id = $1`;
       db.query(sqlQuery, [info.id], (error, result) => {
+        console.log(info.id)
         if (error) return reject(error);
         resolve(result);
       });
@@ -123,48 +124,48 @@ const createHistories = async (client, body, userId) => {
     });
   };
 
-  const getPaidOrder = () => {
+  const getPaidOrder = (info) => {
     return new Promise((resolve, reject) => {
       const sqlQuery = `SELECT DISTINCT ON (h.id) h.id, h.status_id, d.method, h.created_at, t.product_id, p.names, p.prices, p.image
       FROM history h
       JOIN deliveries d ON d.id = h.deliveries_id
       JOIN m_transaction t ON t.history_id = h.id
       JOIN product p ON p.id = t.product_id
-      WHERE h.status_id = 2
-      ORDER BY h.id DESC`;
-      db.query(sqlQuery, (error, result) => {
+      WHERE h.status_id = 2 AND h.users_id = $1 ORDER BY h.id DESC`;
+      db.query(sqlQuery, [info.id], (error, result) => {
+        // console.log(info.id)
         if (error) return reject(error);
         resolve(result);
       });
     });
   };
 
-  const getPendingOrder = () => {
+  const getPendingOrder = (info) => {
     return new Promise((resolve, reject) => {
       const sqlQuery = `SELECT DISTINCT ON (h.id) h.id, h.status_id, d.method, h.created_at, t.product_id, p.names, p.prices, p.image
       FROM history h
       JOIN deliveries d ON d.id = h.deliveries_id
       JOIN m_transaction t ON t.history_id = h.id
       JOIN product p ON p.id = t.product_id
-      WHERE h.status_id = 1
+      WHERE h.status_id = 1 AND h.users_id = $1
       ORDER BY h.id DESC`;
-      db.query(sqlQuery, (error, result) => {
+      db.query(sqlQuery, [info.id], (error, result) => {
         if (error) return reject(error);
         resolve(result);
       });
     });
   };
 
-  const getAllOrder = () => {
+  const getCancelOrder = (info) => {
     return new Promise((resolve, reject) => {
       const sqlQuery = `SELECT DISTINCT ON (h.id) h.id, h.status_id, d.method, h.created_at, t.product_id, p.names, p.prices, p.image
       FROM history h
       JOIN deliveries d ON d.id = h.deliveries_id
       JOIN m_transaction t ON t.history_id = h.id
       JOIN product p ON p.id = t.product_id
-      WHERE h.status_id in (1, 2)
+      WHERE h.status_id = 4 AND h.users_id = $1
       ORDER BY h.id DESC`;
-      db.query(sqlQuery, (error, result) => {
+      db.query(sqlQuery, [info.id], (error, result) => {
         if (error) return reject(error);
         resolve(result);
       });
@@ -195,6 +196,6 @@ module.exports = {
     setPaidOrder,
     getPaidOrder,
     getPendingOrder,
-    getAllOrder,
+    getCancelOrder,
     setCancelOrder
 }

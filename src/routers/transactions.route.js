@@ -9,9 +9,9 @@ const transactionRouter = Router();
 transactionRouter.post("/", checkToken, transactionsController.createTransactions);
 transactionRouter.get("/", checkToken, transactionsController.getHistory);
 transactionRouter.patch("/paid/:id", checkToken, checkRole, transactionsController.setPaidOrders);
-transactionRouter.get("/getpaid", checkToken, checkRole, transactionsController.getPaidOrders);
-transactionRouter.get("/getpending", checkToken, checkRole, transactionsController.getPendingOrders);
-transactionRouter.get("/getall", checkToken, checkRole, transactionsController.getAllOrders);
-transactionRouter.patch("/cancel/:id", checkToken, checkRole, transactionsController.setCancelOrders);
+transactionRouter.get("/getpaid", checkToken, transactionsController.getPaidOrders);
+transactionRouter.get("/getpending", checkToken, transactionsController.getPendingOrders);
+transactionRouter.get("/getcancel", checkToken, transactionsController.getCanceledOrders);
+transactionRouter.patch("/cancel/:id", checkToken, transactionsController.setCancelOrders);
 
 module.exports = transactionRouter
