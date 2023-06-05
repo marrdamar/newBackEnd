@@ -6,8 +6,8 @@ const usersRouter = Router();
 
 //localhost /users
 usersRouter.get("/", usersController.getUsers);
-usersRouter.get("/:userId", checkToken, usersController.getUserDetail);
-usersRouter.patch("/:userId", usersController.updateUserData);
+usersRouter.get("/:userId", checkToken, usersController.getUserDetails);
+usersRouter.patch("/:userId", usersController.editUser);
 usersRouter.delete("/delete/:userId", usersController.deleteUser);
 
 module.exports = usersRouter;

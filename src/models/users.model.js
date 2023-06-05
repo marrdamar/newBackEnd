@@ -106,58 +106,110 @@ const getUserDetail = (info) => {
     });
 };
 
-const updateUserData = (params, data, fileLink) => {
-	return new Promise((resolve, reject) => {
-		let sqlColumns = [];
-		let values = [];
-		let index = 1;
+// const updateUserData = (params, data, fileLink) => {
+// 	return new Promise((resolve, reject) => {
+// 		let sqlColumns = [];
+// 		let values = [];
+// 		let index = 1;
 
-		if (data.display_name) {
-			sqlColumns.push(`display_name = $${index++}`);
-			values.push(data.display_name);
-		}
+// 		if (data.display_name) {
+// 			sqlColumns.push(`display_name = $${index++}`);
+// 			values.push(data.display_name);
+// 		}
 
-		if (data.first_name) {
-			sqlColumns.push(`first_name = $${index++}`);
-			values.push(data.first_name);
-		}
+// 		if (data.first_name) {
+// 			sqlColumns.push(`first_name = $${index++}`);
+// 			values.push(data.first_name);
+// 		}
 
-		if (data.last_name) {
-			sqlColumns.push(`last_name = $${index++}`);
-			values.push(data.last_name);
-		}
+// 		if (data.last_name) {
+// 			sqlColumns.push(`last_name = $${index++}`);
+// 			values.push(data.last_name);
+// 		}
 
-        if (data.last_name) {
-			sqlColumns.push(`address = $${index++}`);
-			values.push(data.address);
-		}
+//         if (data.last_name) {
+// 			sqlColumns.push(`address = $${index++}`);
+// 			values.push(data.address);
+// 		}
 
-		if (data.birth_date) {
-			sqlColumns.push(`birth_date = $${index++}`);
-			values.push(data.birth_date);
-		}
+// 		if (data.birth_date) {
+// 			sqlColumns.push(`birth_date = $${index++}`);
+// 			values.push(data.birth_date);
+// 		}
 
-		if (data.genders) {
-			sqlColumns.push(`genders = $${index++}`);
-			values.push(data.genders);
-		}
+// 		if (data.genders) {
+// 			sqlColumns.push(`genders = $${index++}`);
+// 			values.push(data.genders);
+// 		}
 
-		// if (fileLink) {
-		// 	sqlColumns.push(`img = $${index++}`);
-		// 	values.push(fileLink);
-		// }
+// 		// if (fileLink) {
+// 		// 	sqlColumns.push(`img = $${index++}`);
+// 		// 	values.push(fileLink);
+// 		// }
 
-		const sql = `UPDATE profiles SET ${sqlColumns.join(", ")} WHERE users_id = $${index} RETURNING *`;
-		values.push(params.userId);
-		// console.log(fileLink);
-		console.log(sql)
-		console.log(data.genders)
+// 		const sql = `UPDATE profiles SET ${sqlColumns.join(", ")} WHERE users_id = $${index} RETURNING *`;
+// 		values.push(params.userId);
+// 		// console.log(fileLink);
+// 		console.log(sql)
+// 		console.log(data.genders)
 
-		db.query(sql, values, (error, result) => {
-			if (error) return reject(error);
-			resolve(result);
-		});
-	});
+// 		db.query(sql, values, (error, result) => {
+// 			if (error) return reject(error);
+// 			resolve(result);
+// 		});
+// 	});
+// };
+
+const editUserBio = (client, req, fileLink) => {
+    return new Promise((resolve, reject) => {
+      let sqlQuery = "UPDATE profiles SET ";
+      let values = [];
+      let i = 1;
+      const body = req.body;
+    //   if (body.email) {
+    //     delete body.email;
+    //   }
+    //   if (body.phone_number) {
+    //     delete body.phone_number;
+    //   }
+      console.log(body);
+      for (const [key, val] of Object.entries(body)) {
+        sqlQuery += `${key} = $${i}, `;
+        values.push(val);
+        i++;
+      }
+      // if (req.file) {
+      //   const fileLink = `/images/users/${req.file.filename}`;
+      //   sqlQuery += `profile_picture = '${fileLink}', `;
+      // }
+      if (req.file) {
+        sqlQuery += `image = '${fileLink}', `;
+      }
+  
+      sqlQuery = sqlQuery.slice(0, -2);
+      sqlQuery += ` WHERE users_id = $${i} RETURNING *`;
+      values.push(req.authInfo.id);
+      console.log(sqlQuery);
+      client.query(sqlQuery, values, (error, result) => {
+        if (error) return reject(error);
+        resolve(result);
+      });
+    });
+  };
+
+  const editUser = (info, data) => {
+    return new Promise((resolve, reject) => {
+        const editData = "UPDATE profiles SET display_name = $1, first_name = $2, last_name = $3, address = $4, birth_date = $5, genders = $6, image = $7 WHERE users_id = $8 RETURNING *";
+        const values = [data.display_name, data.first_name, data.last_name, data.address, data.birth_date, data.genders, data.image, info.userId];
+        // console.log(values)
+        db.query(editData, values, (error, result) => {
+            if(error) {
+                reject(error);
+                return;
+            }
+            resolve(result);
+        });
+    });
 };
 
 const deleteUser = (info) => {
@@ -177,6 +229,7 @@ const deleteUser = (info) => {
 module.exports = {
     getUsers,
 	getUserDetail,
-    updateUserData,
+    editUser,
+    editUserBio,
     deleteUser
 };
