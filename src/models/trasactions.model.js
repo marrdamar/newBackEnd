@@ -61,7 +61,7 @@ const createHistories = async (client, body, userId) => {
           JOIN promo pr ON pr.id = h.promo_id 
           JOIN deliveries d ON d.id = h.deliveries_id  
           JOIN status sp ON h.status_id = sp.id 
-          WHERE t.id = $1`;
+          WHERE h.id = $1`;
       client.query(sqlQuery, [transactionId], (error, result) => {
         if (error) return reject(error);
         resolve(result);
