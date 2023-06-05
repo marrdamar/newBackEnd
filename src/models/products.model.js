@@ -278,7 +278,7 @@ const editProductCloud = (req, fileLink) => {
 	  let i = 1;
 	  for (const [key, val] of Object.entries(body)) {
 		  sqlQuery += `${key} = $${i}, `;
-		  console.log(key)
+		//   console.log(key)
 		values.push(val);
 		i++;
 	  }
@@ -287,10 +287,10 @@ const editProductCloud = (req, fileLink) => {
 	  }
 	  sqlQuery += `updated_at = NOW() WHERE id = $${i} RETURNING *`;
 	  values.push(params.productId);
-	  console.log(sqlQuery);
-	  console.log(values)
-	  console.log(req.file)
-	  console.log(fileLink)
+	//   console.log(sqlQuery);
+	//   console.log(values)
+	//   console.log(req.file)
+	//   console.log(fileLink)
 	  db.query(sqlQuery, values, (error, result) => {
 		if (error) {
 		  reject(error);

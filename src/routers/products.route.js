@@ -15,11 +15,14 @@ productsRouter.post("/", checkRole, checkToken, singleUpload("image"), productsC
 // productsRouter.post("/", checkRole, checkToken, memoryUpload.single("image"), productsController.insertProducts);
 //add single image
 productsRouter.patch("/image/:productId", checkToken, singleUpload("image"), productsController.patchImageProducts);
+
 //edit cloud
-// productsRouter.patch("/:productId", checkRole, checkToken, memoryUpload.single("image"), productsController.editProductCloud);
+productsRouter.patch("/cloud/:productId", checkRole, checkToken, memoryUpload.single("image"), productsController.editProductCloud);
+
 productsRouter.delete("/:productId", checkRole, checkToken, productsController.deleteProduct);
 //upload single image cloud
 // productsRouter.patch("/cloudimg/:productId", memoryUpload.single("image"), productsController.cloudUpload);
+
 //edit local --> success
 productsRouter.patch("/:productId", checkToken, checkRole, singleUpload("image"), productsController.editProductsLocals);
 
