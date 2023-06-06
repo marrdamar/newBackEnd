@@ -43,9 +43,15 @@ const login = async (req, res) => {
           const expIn = 60;
           const jwtOptions = {expiresIn: `${expIn}m`}
         //   console.log(jwtOptions);
-          jwt.sign(dataUser, jwtSecret, jwtOptions, (err, token) => {
-            if (err) throw token;
-            // await authModel.createToken(id, expIn, token);
+          jwt.sign(dataUser, jwtSecret, jwtOptions, async (err, token) => {
+            if (err) {
+            console.log(err);
+            res.status(500).json({
+                err
+            });
+            return;
+            }
+            await authModels.createToken(id, expIn, token,);
             res.status(200).json({
               msg: "Welcome...",
               token,
@@ -203,10 +209,11 @@ const editPassbyForgot = async (req, res) => {
 const logout = async (req, res) => {
     try {
       // console.log(req.authInfo);
-      await authModel.logout(req.authInfo.id);
+      await authModels.logout(req.authInfo.id);
       res.status(200).json({
         msg: "You Have Been Logout...",
-      });
+    });
+    return
     } catch (err) {
       console.log(err);
       res.status(500).json({

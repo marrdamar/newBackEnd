@@ -108,5 +108,28 @@ const getAccount = (email) => {
     });
   };
 
+  const logout = (userId) => {
+	return new Promise((resolve, reject) => {
+	  const sqlQuery = "UPDATE users SET token = NULL WHERE id = $1";
+	  const values = [userId];
+	  db.query(sqlQuery, values, (error, result) => {
+		if (error) return reject(error);
+		resolve(result);
+	  });
+	});
+  };
+
+  const createToken = (userId, expIn, token) => {
+	return new Promise((resolve, reject) => {
+	  const sqlQuery = `UPDATE users SET token = $1, token_expired = NOW() + INTERVAL '${expIn} minutes' WHERE id = $2`;
+	  const values = [token, userId];
+	  console.log(values);
+	  db.query(sqlQuery, values, (error, result) => {
+		if (error) return reject(error);
+		resolve(result);
+	  });
+	});
+  };
+
   
-module.exports = { userVerification, insertUsers, insertDetailUsers, getAccount, forgotPass, getUserbyForgot, editPassword, loginFirebase, getUser};
+module.exports = { userVerification, insertUsers, insertDetailUsers, getAccount, forgotPass, getUserbyForgot, editPassword, loginFirebase, getUser, logout, createToken };

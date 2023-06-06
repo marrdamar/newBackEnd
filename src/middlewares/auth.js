@@ -1,6 +1,8 @@
 const jwt = require("jsonwebtoken");
 const { jwtSecret } = require("../configs/env")
 
+const blacklist = [];
+
 const checkToken = (req, res, next) => {
     //ambil token dari header
     const bearerToken = req.header("Authorization");
@@ -46,6 +48,7 @@ const blacklistToken = (req, res, next) => {
         res.status(200).json({
           msg: "Logout Success...",
         });
+        return
       });
       next();
     } catch (error) {
