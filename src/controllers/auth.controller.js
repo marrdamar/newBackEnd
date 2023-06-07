@@ -208,8 +208,8 @@ const editPassbyForgot = async (req, res) => {
 
 const logout = async (req, res) => {
     try {
-      // console.log(req.authInfo);
-      await authModels.logout(req.authInfo.id);
+        await authModels.logout(req.authInfo.id);
+        console.log(req.authInfo);
       res.status(200).json({
         msg: "You Have Been Logout...",
     });

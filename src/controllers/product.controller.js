@@ -157,12 +157,13 @@ const editProductCloud = async (req, res) => {
       let fileLink = "";
       if (req.file) {
         const fileName =
-          req.body.names.replace(/\s/g, "") || req.params.productId;
+        req.body.names.replace(/\s/g, "") || req.params.productId;
         const upCloud = await uploader(req, "products", fileName);
         fileLink = upCloud.data.secure_url;
+        // console.log(upCloud)
       }
-      console.log(fileLink)
       const result = await productsModel.editProductCloud(req, fileLink);
+      console.log(result)
       if (result.rowCount === 0) {
         res.status(404).json({
           msg: `Edit Fail... ID ${req.params.productId} Not Found...`,

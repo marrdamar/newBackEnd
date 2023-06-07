@@ -128,8 +128,16 @@ const insertUsers = async (req, res) => {
 const editUser = async (req, res) => {
 	try {
 	  const { params, body } = req;
-	  const result = await usersModel.editUser(params, body);
-	  console.log(params, body)
+	//   console.log(params, body)
+	  const { data, err, msg } = await uploader(req, "users", params.userId);
+		if (err) throw { msg, err };
+
+		let fileLink;
+		if (data !== null) {
+			fileLink = data.secure_url;
+		}
+		// console.log(fileLink)
+	  const result = await usersModel.editUserBio(params, body, fileLink);
 	  if (result.rowCount === 0) {
 		  res.status(404).json({
 			  msg: `Edit Fail... ID ${params.userId} Not Found...`,
