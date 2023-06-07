@@ -1,11 +1,11 @@
 const cloudinary = require("cloudinary");
 
-const { cloudName, cloudKey, cloudSecret } = require("./env");
+// const { CLOUD_NAME, CLOUD_KEY, CLOUD_SECRET } = require("./env");
 
 cloudinary.config({
-    cloud_name: cloudName,
-    api_key: cloudKey,
-    api_secret: cloudSecret,
+    cloud_name: process.env.CLOUD_NAME,
+    api_key: process.env.CLOUD_KEY,
+    api_secret: process.env.CLOUD_SECRET,
     secure : true,
 });
 
