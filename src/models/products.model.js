@@ -285,9 +285,10 @@ const editProductCloud = (req, fileLink) => {
 	  if (req.file !== "") {
 		sqlQuery += `image = '${fileLink}', `;
 	  }
+	//   console.log(req.file)
 	  sqlQuery += `updated_at = NOW() WHERE id = $${i} RETURNING *`;
 	  values.push(params.productId);
-	//   console.log(sqlQuery);
+	  console.log(sqlQuery);
 	//   console.log(values)
 	//   console.log(req.file)
 	//   console.log(fileLink)
