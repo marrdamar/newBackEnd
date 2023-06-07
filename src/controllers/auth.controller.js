@@ -1,10 +1,10 @@
 const jwt = require("jsonwebtoken");
 const authModels = require("../models/auth.model");
-const { jwtSecret } = require("../configs/env");
+require("dotenv").config();
+const {jwtSecret} = require("../configs/env")
 const bcrypt = require("bcrypt");
 // const response = require("../utils/response");
 const db = require("../configs/postgre");
-
 const login = async (req, res) => {
     try {
         //ambil email dan pwd dari body
@@ -13,6 +13,7 @@ const login = async (req, res) => {
         const result = await authModels.userVerification(body.email);
         //jika true, maka create jwt
         //jika false, maka error handling
+        console.log(jwtSecret)
         if (result.rows.length < 1)
             return res.status(401).json({
                 msg: "Email / Password Salah!",
