@@ -37,7 +37,7 @@ const getPromoDetails = (info) => {
 const addPromo = (data) => {
     return new Promise((resolve, reject) => {
       const addData =
-        "INSERT INTO promo (title, product_id, coupon_code, discount, coupon_desc, coupon_expired) VALUES ($1, UPPER($2), $3, $4, $5, $6) RETURNING *";
+        "INSERT INTO promo (title, product_id, coupon_code, discount, coupon_desc, coupon_expired) VALUES ($1, $2, UPPER($3), $4, $5, $6) RETURNING *";
       const values = [
         data.title,
         data.product_id,
