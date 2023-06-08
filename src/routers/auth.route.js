@@ -16,6 +16,6 @@ authRouter.patch("/forgot", authController.forgotPass);
 //editpassbyforgot
 authRouter.patch("/editpassbyforgot", authController.editPassbyForgot);
 //logout
-authRouter.patch("/logout", authMiddleware.checkToken, authMiddleware.blacklistToken, authController.logout);
+authRouter.patch("/logout", authMiddleware.blacklistToken, authController.logout);
 
 module.exports = authRouter;
