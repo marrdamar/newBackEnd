@@ -92,7 +92,7 @@ const getUsers = (info) => {
 const getUserDetail = (info) => {
     return new Promise((resolve, reject) => {
 
-        const pick = "u.id, email, password, phone_number, ub.display_name, ub.first_name, ub.last_name, ub.address, ub.birth_date, ub.genders, ub.image";
+        const pick = "u.id, email, password, phone_number, ub.display_name, ub.first_name, ub.last_name, ub.address, ub.birth_date, ub.genders, ub.profile_image";
         const table = "users u JOIN profiles ub ON ub.users_id = u.id";
         const showData = `SELECT ${pick} FROM ${table} WHERE u.id = $1`;
         const values = [info.userId];
