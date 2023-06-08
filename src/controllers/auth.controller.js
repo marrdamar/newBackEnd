@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 const authModels = require("../models/auth.model");
-require("dotenv").config();
+// require("dotenv").config();
 const {jwtSecret} = require("../configs/env")
 const bcrypt = require("bcrypt");
 // const response = require("../utils/response");
@@ -13,11 +13,10 @@ const login = async (req, res) => {
         const result = await authModels.userVerification(body.email);
         //jika true, maka create jwt
         //jika false, maka error handling
-        console.log(jwtSecret)
         if (result.rows.length < 1)
-            return res.status(401).json({
-                msg: "Email / Password Salah!",
-            });
+        return res.status(401).json({
+            msg: "Email / Password Salah!",
+        });
         // console.log(result)
         const {
             id,
@@ -34,17 +33,18 @@ const login = async (req, res) => {
             });
             return;
         }
-
+        
         const dataUser = {
             id,
             email,
             phone_number,
-          };
+        };
         
-          const expIn = 60;
-          const jwtOptions = {expiresIn: `${expIn}m`}
+        const expIn = 60;
+        const jwtOptions = {expiresIn: `${expIn}m`}
         //   console.log(jwtOptions);
-          jwt.sign(dataUser, jwtSecret, jwtOptions, async (err, token) => {
+        jwt.sign(dataUser, jwtSecret, jwtOptions, async (err, token) => {
+            console.log(jwtOptions)
             if (err) {
             console.log(err);
             res.status(500).json({
