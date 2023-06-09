@@ -207,8 +207,8 @@ const getMetaProducts = (info) => {
 const insertProducts = (data, fileLink) => {
 	return new Promise((resolve, reject) => {
 		const sql =
-			"INSERT INTO product (names, prices, categories_id, image) VALUES ($1, $2, $3, $4) RETURNING *";
-		const values = [data.names, data.prices, data.categories_id, fileLink];
+			"INSERT INTO product (names, prices, categories_id, desc_product, image) VALUES ($1, $2, $3, $4, $5) RETURNING *";
+		const values = [data.names, data.prices, data.categories_id, data.desc_product, fileLink];
 		console.log(values)
 		console.log(sql)
 		db.query(sql, values, (error, result) => {
