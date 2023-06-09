@@ -225,9 +225,9 @@ const editUserBio = (params, data, fileLink) => {
 			values.push(data.birth_date);
 		}
 
-		if (data.gender) {
+		if (data.genders) {
 			sqlColumns.push(`genders = $${index++}`);
-			values.push(data.gender);
+			values.push(data.genders);
 		}
 
 		if (fileLink) {
