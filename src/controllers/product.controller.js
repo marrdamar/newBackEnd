@@ -53,18 +53,19 @@ const getProducts = async (req, res) => {
 
 
 const insertProducts = async (req, res) => {
-	try {
+  try {
+    let fileLink;
 		const { body, file } = req;
     console.log(file)
 		const valueResult = await productsModel.nextIdValue();
 		const nextValue = valueResult.rows[0].next_value;
-		// const { data, err, msg } = await uploader(req, "products", nextValue);
-		// if (err) throw { msg, err };
+		const { data, err, msg } = await uploader(req, "products", nextValue);
+		if (err) throw { msg, err };
 
 		if (!file) return (res, { status:400, message: "Image Is Required" });
-    const fileLink = `/images/${req.file.filename}`;
-    console.log(fileLink)
+    fileLink = data.secure_url;
 		const result = await productsModel.insertProducts(body, fileLink);
+    console.log(fileLink)
 
 		res.status(201).json({
 			data: result.rows[0],
@@ -74,6 +75,27 @@ const insertProducts = async (req, res) => {
 		console.log(err.message);
 		return (res, { status: 500, message: "Internal Server Error" });
 	}
+  // try {
+  //   let fileLink = "";
+  //   if (req.file) {
+  //     const fileName = req.params.productId;
+  //     const upCloud = await uploader(req, "products", fileName);
+  //     fileLink = upCloud.data.secure_url;
+  //     // console.log(upCloud)
+  //   }
+  //   console.log(fileLink)
+  //   const result = await productsModel.insertProducts(req, fileLink);
+  //   res.status(201).json({
+  //     msg: "Add Data Success...",
+  //     data: result.rows,
+  //   });
+  // } catch (err) {
+  //   console.log(err.message);
+  //   res.status(500).json({
+  //     msg: "Internal Server Error...",
+  //     data: err.detail,
+  //   });
+  // }
 };
 
 
