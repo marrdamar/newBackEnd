@@ -1,10 +1,11 @@
 const jwt = require("jsonwebtoken");
 const authModels = require("../models/auth.model");
 // require("dotenv").config();
-const {jwtSecret} = require("../configs/env")
+const { jwtSecret } = require("../configs/env")
 const bcrypt = require("bcrypt");
 // const response = require("../utils/response");
 const db = require("../configs/postgre");
+const { uploader } = require("../utils/cloudinary");
 const login = async (req, res) => {
     try {
         //ambil email dan pwd dari body
@@ -14,9 +15,9 @@ const login = async (req, res) => {
         //jika true, maka create jwt
         //jika false, maka error handling
         if (result.rows.length < 1)
-        return res.status(401).json({
-            msg: "Email / Password Salah!",
-        });
+            return res.status(401).json({
+                msg: "Email / Password Salah!",
+            });
         // console.log(result)
         const {
             id,
@@ -35,7 +36,7 @@ const login = async (req, res) => {
             });
             return;
         }
-        
+
         const dataUser = {
             id,
             email,
@@ -43,45 +44,45 @@ const login = async (req, res) => {
             profile_image,
             display_name
         };
-        
+
         const expIn = 60;
-        const jwtOptions = {expiresIn: `${expIn}m`}
+        const jwtOptions = { expiresIn: `${expIn}m` }
         //   console.log(jwtOptions);
         jwt.sign(dataUser, jwtSecret, jwtOptions, async (err, token) => {
             console.log(jwtOptions)
             if (err) {
-            console.log(err);
-            res.status(500).json({
-                err
-            });
-            return;
+                console.log(err);
+                res.status(500).json({
+                    err
+                });
+                return;
             }
             await authModels.createToken(id, expIn, token,);
             res.status(200).json({
-              msg: "Welcome...",
-              token,
-              dataUser,
+                msg: "Welcome...",
+                token,
+                dataUser,
             });
-          });
-        } catch (err) {
-          console.log(err);
-          res.status(500).json({
+        });
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({
             msg: "Internal Server Error...",
-          });
-        }
-      };
+        });
+    }
+};
 
-      
-        
-        // const { password } = result.rows[0];
-        // const isPwdValid = await bcrypt.compare(body.password, password);
-        // if (!isPwdValid) {
-        //     return (res.status(401).json({
-        //         msg: "Email atau Password Salah!",
-        //     }));
-        // };
 
-        //buat token
+
+// const { password } = result.rows[0];
+// const isPwdValid = await bcrypt.compare(body.password, password);
+// if (!isPwdValid) {
+//     return (res.status(401).json({
+//         msg: "Email atau Password Salah!",
+//     }));
+// };
+
+//buat token
 //         jwt.sign(
 //             result.rows[0],
 //             jwtSecret,
@@ -211,22 +212,52 @@ const editPassbyForgot = async (req, res) => {
     }
 };
 
+const editProfile = async (req, res) => {
+    const client = await db.connect();
+    try {
+        if (req.body.email || req.body.phone_number) {
+            await authModels.editUser(client, req);
+        }
+        await client.query("BEGIN");
+        let fileLink = "";
+        console.log(req.file);
+        if (req.file) {
+            const fileName = req.authInfo.id;
+            const upCloud = await uploader(req, "user", fileName);
+            fileLink = upCloud.data.secure_url;
+        }
+        const resultUserBio = await authModels.editUserBio(client, req, fileLink);
+        await client.query("COMMIT");
+        res.status(200).json({
+            msg: "Update Success...",
+            data: resultUserBio.rows,
+        });
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({
+            msg: "Internal Server Error...",
+        });
+    } finally {
+        client.release();
+    }
+};
+
 const logout = async (req, res) => {
     try {
         await authModels.logout(req.authInfo.id);
         console.log(req.authInfo);
-      res.status(200).json({
-        msg: "You Have Been Logout...",
-    });
-    return
+        res.status(200).json({
+            msg: "You Have Been Logout...",
+        });
+        return
     } catch (err) {
-      console.log(err);
-      res.status(500).json({
-        msg: "Internal Server Error...",
-      });
+        console.log(err);
+        res.status(500).json({
+            msg: "Internal Server Error...",
+        });
     }
-  };
+};
 
 
 
-module.exports = { login, privateAccess, insertUsers, forgotPass, editPassbyForgot, logout };
+module.exports = { login, privateAccess, insertUsers, forgotPass, editPassbyForgot, logout, editProfile };

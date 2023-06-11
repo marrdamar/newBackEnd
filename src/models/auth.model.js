@@ -87,6 +87,62 @@ const getAccount = (email) => {
 	});
   };
 
+  const editUser = (client, req) => {
+	return new Promise((resolve, reject) => {
+	  let sqlQuery = "UPDATE users SET";
+	  let values = [req.authInfo.id];
+	  if (req.body.email) {
+		sqlQuery += ` email = '${req.body.email}',`;
+	  }
+	  if (req.body.phone_number) {
+		sqlQuery += ` phone_number = ${req.body.phone_number}`;
+	  }
+	  sqlQuery += " WHERE id = $1 RETURNING *";
+	  console.log(sqlQuery);
+	  client.query(sqlQuery, values, (error, result) => {
+		if (error) return reject(error);
+		resolve(result);
+	  });
+	});
+  };
+
+  const editUserBio = (client, req, fileLink) => {
+    return new Promise((resolve, reject) => {
+        let sqlQuery = "UPDATE profiles SET ";
+        let values = [];
+        let i = 1;
+        const body = req.body;
+        if (body.email) {
+            delete body.email;
+        }
+        if (body.phone) {
+            delete body.phone_number;
+        }
+        console.log(body);
+        for (const [key, val] of Object.entries(body)) {
+            sqlQuery += `${key} = $${i}, `;
+            values.push(val);
+            i++;
+        }
+        // if (req.file) {
+        //   const fileLink = `/images/users/${req.file.filename}`;
+        //   sqlQuery += `profile_picture = '${fileLink}', `;
+        // }
+        if (req.file) {
+            sqlQuery += `profile_image = '${fileLink}', `;
+        }
+
+        sqlQuery = sqlQuery.slice(0, -2);
+        sqlQuery += ` WHERE users_id = $${i} RETURNING *`;
+        values.push(req.authInfo.id);
+        console.log(sqlQuery);
+        client.query(sqlQuery, values, (error, result) => {
+            if (error) return reject(error);
+            resolve(result);
+        });
+    });
+};
+
   const loginFirebase = (tokenFcm, userId) => {
     return new Promise((resolve, reject) => {
       const sqlQuery = "UPDATE users SET token_fcm = $1 WHERE id = $2";
@@ -132,4 +188,4 @@ const getAccount = (email) => {
   };
 
   
-module.exports = { userVerification, insertUsers, insertDetailUsers, getAccount, forgotPass, getUserbyForgot, editPassword, loginFirebase, getUser, logout, createToken };
+module.exports = { userVerification, insertUsers, insertDetailUsers, getAccount, forgotPass, getUserbyForgot, editPassword, loginFirebase, getUser, logout, createToken, editUser, editUserBio };
