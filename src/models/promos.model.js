@@ -3,7 +3,7 @@ const db = require("../configs/postgre");
 const getPromos = (info) => {
   return new Promise((resolve, reject) => {
     let showData =
-      "SELECT pr.id, pr.product_id, coupon_code, discount, coupon_desc, pr.coupon_expired, pr.title FROM promo pr JOIN product pd ON pd.id = pr.product_id WHERE pr.id <> 1 ORDER BY pr.id ";
+      "SELECT pr.id, pr.product_id, coupon_code, discount, coupon_desc, pr.coupon_expired, pr.title, pd.image FROM promo pr JOIN product pd ON pd.id = pr.product_id WHERE pr.id <> 1 ORDER BY pr.id ";
     let order = "ASC";
     if (info.order === "desc") {
       order = "DESC";
@@ -22,7 +22,7 @@ const getPromos = (info) => {
 const getPromoDetails = (info) => {
     return new Promise((resolve, reject) => {
       const showData =
-        "SELECT po.id, po.title, coupon_code, discount FROM promo po JOIN product pd ON po.product_id = pd.id WHERE po.id = $1";
+        "SELECT po.id, po.title, coupon_code, discount, pd.image FROM promo po JOIN product pd ON po.product_id = pd.id WHERE po.id = $1";
       const values = [info.promoId];
       db.query(showData, values, (error, result) => {
         if (error) {
