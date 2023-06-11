@@ -22,7 +22,9 @@ const login = async (req, res) => {
             id,
             email,
             password,
-            phone_number
+            phone_number,
+            profile_image,
+            display_name
         } = result.rows[0];
         // console.log(result.rows[0])
         const isPassValid = await bcrypt.compare(body.password, password);
@@ -38,6 +40,8 @@ const login = async (req, res) => {
             id,
             email,
             phone_number,
+            profile_image,
+            display_name
         };
         
         const expIn = 60;
