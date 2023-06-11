@@ -9,7 +9,7 @@ const productsRouter = Router();
 
 productsRouter.get("/", productsController.getProducts);
 // /products/1
-productsRouter.get("/:productId", checkToken, productsController.getProductDetail);
+productsRouter.get("/:productId", productsController.getProductDetail);
 //add product with statis image
 productsRouter.post("/", checkRole, checkToken, memoryUpload.single("image"), productsController.insertProducts);
 // productsRouter.post("/", checkRole, checkToken, memoryUpload.single("image"), productsController.insertProducts);

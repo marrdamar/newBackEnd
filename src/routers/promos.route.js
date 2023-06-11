@@ -5,8 +5,8 @@ const memoryUpload = require("../middlewares/memoryUpload")
 const { checkRole } = require("../middlewares/checkRole");
 const { checkToken } = require("../middlewares/auth");
 
-promosRouter.get("/", checkToken, promoController.getPromos);
-promosRouter.get("/:promoId", checkToken, promoController.getPromoDetails);
+promosRouter.get("/", promoController.getPromos);
+promosRouter.get("/:promoId", promoController.getPromoDetails);
 //failing row contains
 promosRouter.post("/", checkToken, checkRole, memoryUpload.single("promo_image"), promoController.addPromo);
 promosRouter.patch("/:promoId", checkToken, checkRole, promoController.editPromo);
