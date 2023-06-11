@@ -4,7 +4,7 @@ const db = require("../configs/postgre");
 const userVerification = (email) => {
 	return new Promise((resolve, reject) => {
 		//verifikasi ke db
-		const sql = `select id, email, password, phone_number from users where email=$1`;
+		const sql = `select id, email, password, phone_number, display_name, profile_image from users u JOIN profiles pr on u.id = pr.users_id where email=$1`;
 		db.query(sql, [email], (error, result) => {
 			if (error) return reject(error);
 			return resolve(result);
