@@ -29,13 +29,12 @@ const insertUsers = (client, data) => {
 	});
 };
 
-const insertDetailUsers = (client, users_id) => {
+const insertDetailUsers = (client, userId, data) => {
 	return new Promise((resolve, reject) => {
-		const sql = "INSERT INTO profiles (users_id) VALUES (cast($1 as int))";
-		const values = [users_id.id];
-		client.query(sql, values, (error) => {
+		const sql = "INSERT INTO profiles (users_id, display_name) VALUES ($1, $2)";
+		client.query(sql, [userId, data], (error, result) => {
 			if (error) return reject(error);
-			resolve();
+			resolve(result);
 		});
 	});
 };
