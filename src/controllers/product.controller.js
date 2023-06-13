@@ -158,9 +158,16 @@ const deleteProduct = async (req, res) => {
 };
 
 const patchImageProducts = async (req, res) => {
-    const fileLink = `/images/${req.file.filename}`;
+    let fileLink = "";
     console.log(fileLink)
     try {
+      let fileLink = "";
+      if (req.file) {
+        const fileName = req.params.productId;
+        const upCloud = await uploader(req, "products", fileName);
+        fileLink = upCloud.data.secure_url;
+        // console.log(upCloud)
+      }
         const result = await productsModel.updateImageProducts(fileLink, req.params.productId);
         res.status(200).json({
             msg : "Images Updated",
