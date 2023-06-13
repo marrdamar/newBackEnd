@@ -57,13 +57,21 @@ $ npm run dev
 | GET       | /products                         | ListProd  |
 | POST      | /products                         | AddProd   |
 | GET       | /products/productId               | SingleProd|
-| PATCH     | /products/productId               | EditProd  |
+| PATCH     | /products/cloud/productId         | EditProd  |
+| PATCH     | /products/cloudimg/productId      | SingleImg |
 | DELETE    | /products/productId               | DeleteProd|
 | --------- | --------------------------------- | --------- |
 | USERS     |                                   |           |
 | GET       | /users                            | ListUser  |
 | GET       | /users/userId                     | SingleUser|
 | PATCH     | /users/userId                     | EditUser  |
+| DELETE    | /users/userId                     | DeleteUser|
+| --------- | --------------------------------- | --------- |
+| PROMO     |                                   |           |
+| GET       | /promos                           | ListPromo |
+| GET       | /promos/promoId                   |SinglePromo|
+| POST      | /promos                           |  AddPromo |
+| PATCH     | /promos/promoId                   | EditPromo |
 | DELETE    | /users/userId                     | DeleteUser|
 | --------- | --------------------------------- | --------- |
 | TRANS     |                                   |           |
