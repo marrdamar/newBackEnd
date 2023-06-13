@@ -248,7 +248,7 @@ const getProductDetail = (params) => {
 
 const updateImageProducts = (fileLink, productId) => {
     return new Promise((resolve, reject) => {
-        const sql = `update product set image = $1 where id = $2 returning *`;
+        const sql = `update product set image = $1 where id = $2 returning id, names, image`;
         db.query(sql, [fileLink, productId], (err, result) => {
             if(err) return reject(err);
             resolve(result);

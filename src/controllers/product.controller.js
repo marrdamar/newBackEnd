@@ -171,7 +171,7 @@ const patchImageProducts = async (req, res) => {
         const result = await productsModel.updateImageProducts(fileLink, req.params.productId);
         res.status(200).json({
             msg : "Images Updated",
-            data : result.rows,
+            data : result.rows
         })
     } catch (error) {
         console.log(error);
