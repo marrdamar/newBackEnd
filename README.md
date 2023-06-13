@@ -7,7 +7,7 @@ This project need to install NodeJS.
 ## Windows Installation
 First of all, after you installed NodeJS. initialize git to your project
 ```
-$ init git
+$ git init
 ```
 and then clone this repo 
 ```
