@@ -230,7 +230,7 @@ const nextIdValue = () => {
 
 const getProductDetail = (params) => {
 	return new Promise((resolve, reject) => {
-		const sql = `SELECT p.id, p.names, p.prices, p.image, c."category_name" as "category_name"
+		const sql = `SELECT p.id, p.names, p.prices, p.image, p.desc_product, c."category_name" as "category_name"
 		FROM product p
 		JOIN categories c on p.categories_id = c.id
 		WHERE p.id = $1`;
