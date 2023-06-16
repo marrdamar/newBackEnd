@@ -1,5 +1,14 @@
+## Description
+This is backend that build with expressjs and postgresql. This project has included feature auth, users (profiles), product, promo, transaction.
+
+## Demo
+[CoffeeShop-BackEnd](https://new-back-end-hazel.vercel.app/)
+
 ## Built With
-[![My Skills](https://skillicons.dev/icons?i=js,express,nodejs,postgres)](https://skillicons.dev)
+[![My Skills](https://skillicons.dev/icons?i=js)](https://www.javascript.com/)
+[![My Skills](https://skillicons.dev/icons?i=express)](https://expressjs.com/)
+[![My Skills](https://skillicons.dev/icons?i=nodejs)](https://nodejs.org/en)
+[![My Skills](https://skillicons.dev/icons?i=postgres)](https://www.postgresql.org/)
 
 ## Requirements
 This project need to install NodeJS.
@@ -42,6 +51,11 @@ CLOUD_SECRET = "YOUR KEY SECRET CLOUD "
 ```
 $ npm run dev
 ```
+
+## Related Project
+[CoffeeShop-ReactJS](https://coffeeshop-react-silk.vercel.app/)
+[CoffeeShop-ReactNative]()
+
 ## Endpoints Call
 
 |   Method  |             Endpoint              |  Remark   |
@@ -81,3 +95,6 @@ $ npm run dev
 | GET       | /transactions/getcancel           |CancelTrans|
 | PATCH     | /transactions/setpaid             |   Paid    |
 | GET       | /transactions/setcancel           |   Cancel  |
+
+## Feedback
+If you have question or any feedback, just contact me on email damaranggoro7@gmail.com
