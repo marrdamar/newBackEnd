@@ -42,11 +42,20 @@ const createTransactions = async (req, res) => {
 
   const getHistory = async (req, res) => {
     try {
-      const { authInfo } = req;
-      const result = await transactionsModel.getHistories(authInfo);
+      const { authInfo, query } = req;
+      const result = await transactionsModel.getHistories(authInfo, query);
+      if (result.rows.length === 0) {
+        res.status(404).json({
+          msg: "Data Not Found",
+          data: result.rows,
+        });
+        return;
+      }
+      console.log(authInfo)
+      console.log(query)
       res.status(200).json({
-        data: result.rows,
-      });
+        data:result.rows,
+      })
     } catch (err) {
       console.log(err);
       res.status(500).json({
