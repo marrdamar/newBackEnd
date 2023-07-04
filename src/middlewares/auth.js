@@ -6,8 +6,9 @@ const blacklist = [];
 const checkToken = (req, res, next) => {
     //ambil token dari header
     const bearerToken = req.header("Authorization");
-    const customHeader = req.header("custom");
-    console.log(customHeader, bearerToken);
+    // const customHeader = req.header("custom");
+    const userId = bearerToken
+    console.log(bearerToken, userId);
     //via authorization header berbentuk bearer token
     //bearer token
     //verif token

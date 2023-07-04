@@ -4,7 +4,10 @@ const db = require("../configs/postgre");
 const userVerification = (email) => {
 	return new Promise((resolve, reject) => {
 		//verifikasi ke db
-		const sql = `select u.id, u.email, u.password, u.phone_number, pr.display_name, pr.profile_image from users u JOIN profiles pr on u.id = pr.users_id where email=$1`;
+		const sql = `select u.id, u.email, u.password, u.phone_number, u.roles_id, pr.display_name, pr.profile_image, rl.rolesid FROM users u 
+		JOIN profiles pr on u.id = pr.users_id 
+		JOIN roles rl on u.roles_id = rl.rolesid 
+		WHERE email=$1`;
 		db.query(sql, [email], (error, result) => {
 			if (error) return reject(error);
 			return resolve(result);
@@ -16,8 +19,8 @@ const insertUsers = (client, data) => {
 	return new Promise((resolve, reject) => {
 
 		try { 
-			const sql = "INSERT INTO users ( email, password, phone_number) VALUES ( $1, $2, $3) RETURNING id";
-			const values = [data.email, data.hashedPassword, data.phone_number];
+			const sql = "INSERT INTO users ( email, password, phone_number, roles_id) VALUES ( $1, $2, $3, $4) RETURNING email";
+			const values = [data.email, data.hashedPassword, data.phone_number, 2];
 			client.query(sql, values, (error, result) => {
 				if (error) return reject(error);
 				resolve(result);
@@ -51,8 +54,10 @@ const getAccount = (email) => {
 
   const forgotPass = (userId, otpCode) => {
 	return new Promise((resolve, reject) => {
-	  const sqlQuery =
-		"UPDATE users SET otp_code = $1, otp_expired_at = NOW() + INTERVAL '2 minutes' WHERE id = $2 RETURNING id, email, phone_number, otp_code, otp_expired_at";
+	  let sqlQuery =
+		`UPDATE users SET otp_code = $1, otp_expired_at = NOW() + INTERVAL '1 minutes' WHERE id = $2 RETURNING id, email, phone_number, otp_code, otp_expired_at`;
+		// sqlQuery += ` AND UPDATE users SET otp_code = null where otp_expired_at < NOW() - INTERVAL '1 minutes'`
+		// console.log(sqlQuery)
 	  db.query(sqlQuery, [otpCode, userId], (error, result) => {
 		if (error) return reject(error);
 		resolve(result);
@@ -76,7 +81,7 @@ const getAccount = (email) => {
 
   const editPassword = (newPassword, userId) => {
 	return new Promise((resolve, reject) => {
-	  const sqlQuery = "UPDATE users SET password = $1 WHERE id = $2";
+	  const sqlQuery = "UPDATE users SET password = $1, otp_code = null WHERE id = $2";
 	  const values = [newPassword, userId];
 	  db.query(sqlQuery, values, (error, result) => {
 		if (error) return reject(error);
@@ -155,7 +160,7 @@ const getAccount = (email) => {
 
   const getUser = (userId) => {
     return new Promise((resolve, reject) => {
-      const sqlQuery = "SELECT token_fcm FROM users WHERE id = $1";
+      const sqlQuery = "SELECT token FROM users WHERE id = $1";
       db.query(sqlQuery, [userId], (error, result) => {
         if (error) return reject(error);
         resolve(result);

@@ -27,7 +27,7 @@ const checkRole = (req, res, next) => {
 			});
 		};
 
-		req.authInfo = payload.role_id;
+		req.authInfo = payload.roles_id;
 		next();
 	});
 };

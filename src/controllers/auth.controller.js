@@ -25,7 +25,8 @@ const login = async (req, res) => {
             password,
             phone_number,
             profile_image,
-            display_name
+            display_name,
+            roles_id
         } = result.rows[0];
         // console.log(result.rows[0])
         const isPassValid = await bcrypt.compare(body.password, password);
@@ -42,7 +43,8 @@ const login = async (req, res) => {
             email,
             phone_number,
             profile_image,
-            display_name
+            display_name,
+            roles_id
         };
 
         const expIn = 60;
@@ -135,7 +137,7 @@ const insertUsers = async (req, res) => {
         await client.query("COMMIT");
         client.release();
         res.status(200).json({
-            message: "OK",
+            message: "Register Success!",
             data: insertUsers.rows,
         });
     } catch (err) {
@@ -166,8 +168,8 @@ const forgotPass = async (req, res) => {
         const result = await authModels.forgotPass(userId, otpCode);
         console.log("CODE OTP : ", result.rows[0].otp_code);
         res.status(200).json({
-            msg: "Created OTP Code...",
-            data: result.rows[0].otp_code,
+            msg: "OTP will be expired in 1 minute",
+            data: result.rows[0].email,
         });
     } catch (err) {
         console.log(err);
