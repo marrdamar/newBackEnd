@@ -46,19 +46,19 @@ const db = require("../configs/postgre");
 // 	});
 // };
 
-const getUsers = (info) => {
+const getUsers = () => {
     return new Promise((resolve, reject) => {
         let showData = "SELECT * FROM users ORDER BY id ";
         let order = "ASC LIMIT 5 OFFSET 0";
-        if(info.page) {
-            if(info.page == "all") {
-                order = "ASC";
-            } else {
-                let offset = parseInt(info.page);
-                let page = (offset - 1) * 5;
-                order = `ASC LIMIT 5 OFFSET ${page}`;
-            }
-        }
+        // if(info.page) {
+        //     if(info.page == "all") {
+        //         order = "ASC";
+        //     } else {
+        //         let offset = parseInt(info.page);
+        //         let page = (offset - 1) * 5;
+        //         order = `ASC LIMIT 5 OFFSET ${page}`;
+        //     }
+        // }
         showData += order;
         db.query(showData, (error, result) => {
             if(error) {
@@ -89,14 +89,15 @@ const getUsers = (info) => {
 // 	});
 // };
 
-const getUserDetail = (info) => {
+const getUserDetail = (userId) => {
     return new Promise((resolve, reject) => {
 
-        const pick = "u.id, email, password, phone_number, ub.display_name, ub.first_name, ub.last_name, ub.address, ub.birth_date, ub.genders, ub.profile_image";
+        const pick = "u.id, email, password, phone_number, ub.display_name, ub.first_name, ub.last_name, ub.address, ub.birth_date, ub.genders, ub.profile_image, token";
         const table = "users u JOIN profiles ub ON ub.users_id = u.id";
         const showData = `SELECT ${pick} FROM ${table} WHERE u.id = $1`;
-        const values = [info.userId];
-        db.query(showData, values, (error, result) => {
+        // const values = [userId];
+        // console.log(values)
+        db.query(showData, [userId], (error, result) => {
             if(error) {
                 reject(error);
                 return;
