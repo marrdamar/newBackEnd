@@ -16,7 +16,7 @@ const uploader = async (req, prefix, id) => {
     // console.log(buffer)
     // console.log(datauri)
     // console.log(ext)
-    // console.log(file)
+    console.log(file)
     //upload ke cloudinary
     try {
         const result = await cloudinary.uploader.upload(datauri.content, {

@@ -125,7 +125,7 @@ const getProducts = (info) => {
 	  if (info.order === "priciest") {
 		parameters += "ORDER BY prices DESC ";
 	  }
-	  if (!info.order) {
+	  if (info.order === "default") {
 		parameters += "ORDER BY id ASC";
 	  }
 	  const limit = parseInt(info.limit) || 12;
@@ -133,6 +133,7 @@ const getProducts = (info) => {
 	  const offset = (page - 1) * limit;
 	  sqlQuery += `${parameters} LIMIT ${limit} OFFSET ${offset}`;
 	  console.log(sqlQuery);
+	  console.log(info)
 	  db.query(sqlQuery, (error, result) => {
 		if (error) {
 		  reject(error);
@@ -209,8 +210,8 @@ const insertProducts = (data, fileLink) => {
 		const sql =
 			"INSERT INTO product (names, prices, categories_id, desc_product, image) VALUES ($1, $2, $3, $4, $5) RETURNING *";
 		const values = [data.names, data.prices, data.categories_id, data.desc_product, fileLink];
-		console.log(values)
-		console.log(sql)
+		// console.log(values)
+		// console.log(sql)
 		db.query(sql, values, (error, result) => {
 			if (error) return reject(error);
 			resolve(result);
@@ -230,9 +231,10 @@ const nextIdValue = () => {
 
 const getProductDetail = (params) => {
 	return new Promise((resolve, reject) => {
-		const sql = `SELECT p.id, p.names, p.prices, p.image, p.desc_product, c."category_name" as "category_name"
+		const sql = `SELECT p.id, p.names, p.prices, p.image, p.desc_product, pr.id, pr.title, pr.discount, c."category_name" as "category_name"
 		FROM product p
 		JOIN categories c on p.categories_id = c.id
+		JOIN promo pr on p.id = pr.id
 		WHERE p.id = $1`;
 		const values = [params.productId];
 
@@ -302,6 +304,81 @@ const editProductCloud = (req, fileLink) => {
 	});
   };
 
+  const editProductV2 = (params, data, fileLink) => {
+    // return new Promise((resolve, reject) => {
+    //   let sqlQuery = "UPDATE profiles SET ";
+    //   let values = [];
+    //   let i = 1;
+    //   const body = req.body;
+    // //   if (body.email) {
+    // //     delete body.email;
+    // //   }
+    // //   if (body.phone_number) {
+    // //     delete body.phone_number;
+    // //   }
+    //   console.log(body);
+    //   for (const [key, val] of Object.entries(body)) {
+    //     sqlQuery += `${key} = $${i}, `;
+    //     values.push(val);
+    //     i++;
+    //   }
+    //   // if (req.file) {
+    //   //   const fileLink = `/images/users/${req.file.filename}`;
+    //   //   sqlQuery += `profile_picture = '${fileLink}', `;
+    //   // }
+    //   if (req.file) {
+    //     sqlQuery += `image = '${fileLink}', `;
+    //   }
+  
+    //   sqlQuery = sqlQuery.slice(0, -2);
+    //   sqlQuery += ` WHERE users_id = $${i} RETURNING *`;
+    //   values.push(req.authInfo.id);
+    //   console.log(sqlQuery);
+    //   client.query(sqlQuery, values, (error, result) => {
+    //     if (error) return reject(error);
+    //     resolve(result);
+    //   });
+    // });
+    return new Promise((resolve, reject) => {
+		let sqlColumns = [];
+		let values = [];
+		let index = 1;
+
+		if (data.names) {
+			sqlColumns.push(`names = $${index++}`);
+			values.push(data.names);
+		}
+
+		if (data.prices) {
+			sqlColumns.push(`prices = $${index++}`);
+			values.push(data.prices);
+		}
+
+		if (data.categories_id) {
+			sqlColumns.push(`categories_id = $${index++}`);
+			values.push(data.categories_id);
+		}
+
+		if (data.desc_product) {
+			sqlColumns.push(`desc_product = $${index++}`);
+			values.push(data.desc_product);
+		}
+
+		if (fileLink) {
+			sqlColumns.push(`image = $${index++}`);
+			values.push(fileLink);
+		}
+
+		const sql = `UPDATE product SET ${sqlColumns.join(", ")} WHERE id = $${index} RETURNING *`;
+		values.push(params.productId);
+		console.log(fileLink);
+        db.query(sql, values, (error, result) => {
+			if (error) return reject(error);
+			resolve(result);
+		});
+	});
+};
+
 const deleteProduct = (params) => {
 	return new Promise((resolve, reject) => {
 		const sql = "DELETE FROM product WHERE id = $1 RETURNING *";
@@ -354,5 +431,6 @@ module.exports = {
     updateImageProducts,
     nextIdValue,
 	editProductCloud,
-	editProductsLocal
+	editProductsLocal,
+	editProductV2
 };
