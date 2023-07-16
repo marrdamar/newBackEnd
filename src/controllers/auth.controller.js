@@ -138,7 +138,7 @@ const insertUsers = async (req, res) => {
         client.release();
         res.status(200).json({
             message: "Register Success!",
-            data: insertUsers.rows,
+            // data: insertUsers.rows,
         });
     } catch (err) {
         console.log(err.message);
