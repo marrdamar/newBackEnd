@@ -17,18 +17,12 @@ const userVerification = (email) => {
 
 const insertUsers = (client, data) => {
 	return new Promise((resolve, reject) => {
-
-		try { 
-			const sql = "INSERT INTO users ( email, password, phone_number, roles_id) VALUES ( $1, $2, $3, $4) RETURNING email";
+			const sql = "INSERT INTO users ( email, password, phone_number, roles_id) VALUES ( $1, $2, $3, $4) RETURNING id";
 			const values = [data.email, data.hashedPassword, data.phone_number, 2];
 			client.query(sql, values, (error, result) => {
 				if (error) return reject(error);
 				resolve(result);
 			});
-
-		} catch (error) {
-			console.log(error)
-		}
 	});
 };
 
