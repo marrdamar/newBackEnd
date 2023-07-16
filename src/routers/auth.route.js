@@ -11,7 +11,7 @@ authRouter.post("/", authController.login);
 //register
 authRouter.post("/register", authController.insertUsers);
 //private
-authRouter.get("/private", authMiddleware.checkToken, authController.privateAccess);
+// authRouter.get("/private", authMiddleware.checkToken, authController.privateAccess);
 //forgot
 authRouter.patch("/forgot", authController.forgotPass);
 //editpassbyforgot
