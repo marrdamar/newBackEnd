@@ -20,5 +20,7 @@ authRouter.patch("/editpassbyforgot", authController.editPassbyForgot);
 authRouter.patch("/profile", authMiddleware.checkToken, memoryUpload.single("profile_image"), authController.editProfile);
 //logout
 authRouter.patch("/logout", authMiddleware.blacklistToken, authController.logout);
+//login-firebase
+authRouter.patch("/login-firebase", authController.loginFirebase)
 
 module.exports = authRouter;

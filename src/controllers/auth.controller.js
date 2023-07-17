@@ -260,6 +260,22 @@ const logout = async (req, res) => {
     }
 };
 
+const loginFirebase = async (req, res) => {
+    try {
+      const { body } = req;
+      const result = await authModels.loginFirebase(body.token_fcm, body.user_id);
+      res.status(200).json({
+        msg: "Login firebase success",
+        data: result.rows,
+      });
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({
+        msg: "Internal Server Error...",
+      });
+    }
+  };
 
 
-module.exports = { login, privateAccess, insertUsers, forgotPass, editPassbyForgot, logout, editProfile };
+
+module.exports = { login, privateAccess, insertUsers, forgotPass, editPassbyForgot, logout, editProfile, loginFirebase };
