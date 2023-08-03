@@ -214,6 +214,31 @@ const editPassbyForgot = async (req, res) => {
     }
 };
 
+const editPassword = async (req, res) => {
+    try {
+      const { authInfo, body } = req;
+      console.log(authInfo.id);
+      const result = await authModels.getPassword(authInfo.id);
+      const passFromDb = result.rows[0].password;
+      const isPassValid = await bcrypt.compare(body.oldPassword, passFromDb);
+      console.log(isPassValid);
+      if (!isPassValid)
+        return res.status(403).json({
+          msg: "Old Password Wrong.!",
+        });
+      const hashedPassword = await bcrypt.hash(body.newPassword, 10);
+      await authModels.editPassword(hashedPassword, authInfo.id);
+      res.status(200).json({
+        msg: "Edit Password Success...",
+      });
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({
+        msg: "Internal Server Error...",
+      });
+    }
+  };
+
 const editProfile = async (req, res) => {
     const client = await db.connect();
     try {
@@ -278,4 +303,4 @@ const loginFirebase = async (req, res) => {
 
 
 
-module.exports = { login, privateAccess, insertUsers, forgotPass, editPassbyForgot, logout, editProfile, loginFirebase };
+module.exports = { login, privateAccess, insertUsers, forgotPass, editPassbyForgot, logout, editProfile, loginFirebase, editPassword };

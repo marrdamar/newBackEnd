@@ -22,5 +22,7 @@ authRouter.patch("/profile", authMiddleware.checkToken, memoryUpload.single("pro
 authRouter.patch("/logout", authMiddleware.blacklistToken, authController.logout);
 //login-firebase
 authRouter.patch("/login-firebase", authController.loginFirebase)
+//edit pass without otp
+authRouter.patch("/", authMiddleware.checkToken, authController.editPassword);
 
 module.exports = authRouter;

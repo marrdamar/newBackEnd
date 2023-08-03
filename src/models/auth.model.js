@@ -162,6 +162,28 @@ const getAccount = (email) => {
     });
   };
 
+  const getPassword = (userId) => {
+	return new Promise((resolve, reject) => {
+	  const sqlQuery = "SELECT password FROM users WHERE id = $1";
+	  db.query(sqlQuery, [userId], (error, result) => {
+		if (error) return reject(error);
+		resolve(result);
+	  });
+	});
+  };
+
+  const editPasswordNoOtp = (newPassword, userId) => {
+	return new Promise((resolve, reject) => {
+	  const sqlQuery = "UPDATE users SET password = $1 WHERE id = $2";
+	  const values = [newPassword, userId];
+	  db.query(sqlQuery, values, (error, result) => {
+		if (error) return reject(error);
+		resolve(result);
+	  });
+	});
+  };
+  
+
   const logout = (userId) => {
 	return new Promise((resolve, reject) => {
 	  const sqlQuery = "UPDATE users SET token = NULL WHERE id = $1";
@@ -186,4 +208,4 @@ const getAccount = (email) => {
   };
 
   
-module.exports = { userVerification, insertUsers, insertDetailUsers, getAccount, forgotPass, getUserbyForgot, editPassword, loginFirebase, getUser, logout, createToken, editUser, editUserBio };
+module.exports = { userVerification, insertUsers, insertDetailUsers, getAccount, forgotPass, getUserbyForgot, editPassword, loginFirebase, getUser, logout, createToken, editUser, editUserBio, getPassword, editPasswordNoOtp };
