@@ -8,6 +8,7 @@ const transactionRouter = Router();
 
 transactionRouter.post("/", checkToken, transactionsController.createTransactions);
 transactionRouter.get("/", checkToken, transactionsController.getHistory);
+transactionRouter.get("/allhist", checkToken, transactionsController.getAllHistory);
 transactionRouter.patch("/paid/:id", checkToken, checkRole, transactionsController.setPaidOrders);
 transactionRouter.get("/getpaid", checkToken, transactionsController.getPaidOrders);
 transactionRouter.get("/getpending", checkToken, transactionsController.getPendingOrders);

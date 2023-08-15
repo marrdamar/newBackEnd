@@ -42,8 +42,8 @@ const createTransactions = async (req, res) => {
 
   const getHistory = async (req, res) => {
     try {
-      const { authInfo, query } = req;
-      const result = await transactionsModel.getHistories(authInfo, query);
+      const { authInfo } = req;
+      const result = await transactionsModel.getHistories(authInfo);
       if (result.rows.length === 0) {
         res.status(404).json({
           msg: "Data Not Found",
@@ -52,7 +52,29 @@ const createTransactions = async (req, res) => {
         return;
       }
       console.log(authInfo)
-      console.log(query)
+      res.status(200).json({
+        data:result.rows,
+      })
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({
+        msg: "Internal Server Error...",
+      });
+    }
+  };
+
+  const getAllHistory = async (req, res) => {
+    try {
+      // const { authInfo } = req;
+      const result = await transactionsModel.getAllHistory();
+      if (result.rows.length === 0) {
+        res.status(404).json({
+          msg: "Data Not Found",
+          data: result.rows,
+        });
+        return;
+      }
+      // console.log(authInfo)
       res.status(200).json({
         data:result.rows,
       })
@@ -146,6 +168,7 @@ const createTransactions = async (req, res) => {
 module.exports = {
     createTransactions,
     getHistory,
+    getAllHistory,
     setPaidOrders,
     getPaidOrders,
     getPendingOrders,
