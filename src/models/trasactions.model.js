@@ -93,7 +93,7 @@ const getHistories = (info, query) => {
     // sqlQuery += `${parameters}`;
     // console.log(query)
     // console.log(sqlQuery)
-    db.query(sqlQuery, [info.id], (error, result) => {
+    db.query(sqlQuery, (error, result) => {
       // console.log(info.id)
       console.log(info.id)
       if (error) return reject(error);
