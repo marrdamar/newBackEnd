@@ -104,7 +104,13 @@ const getHistories = (info) => {
 
 const getAllHistory = () => {
   return new Promise((resolve, reject) => {
-    const sqlQuery = `SELECT h.id, h.status_id, h.payment_id, d.method, pr.id, pr.discount, t.subtotal, t.created_at, t.product_id, t.sizes_id, p.names, p.prices, p.image FROM history h JOIN deliveries d ON d.id = h.deliveries_id JOIN m_transaction t ON t.history_id = h.id JOIN promo pr on t.product_id = pr.id JOIN product p ON p.id = t.product_id`;
+    const sqlQuery = `SELECT DISTINCT ON (h.id) h.id, h.status_id, d.method, h.created_at, t.product_id, p.names, p.prices, p.image
+    FROM history h
+    JOIN deliveries d ON d.id = h.deliveries_id
+    JOIN m_transaction t ON t.history_id = h.id
+    JOIN product p ON p.id = t.product_id
+    WHERE h.status_id <> 2
+    ORDER BY h.id ASC`;
     db.query(sqlQuery, (error, result) => {
       if (error) return reject(error);
       resolve(result);
@@ -140,6 +146,22 @@ const getPaidOrder = (info) => {
       JOIN product p ON p.id = t.product_id
       WHERE h.status_id = 2 AND h.users_id = $1 ORDER BY h.id DESC`;
     db.query(sqlQuery, [info.id], (error, result) => {
+      // console.log(info.id)
+      if (error) return reject(error);
+      resolve(result);
+    });
+  });
+};
+
+const getAllPaidOrder = () => {
+  return new Promise((resolve, reject) => {
+    const sqlQuery = `SELECT DISTINCT ON (h.id) h.id, h.status_id, d.method, h.created_at, t.product_id, p.names, p.prices, p.image
+      FROM history h
+      JOIN deliveries d ON d.id = h.deliveries_id
+      JOIN m_transaction t ON t.history_id = h.id
+      JOIN product p ON p.id = t.product_id
+      WHERE h.status_id = 2 ORDER BY h.id DESC`;
+    db.query(sqlQuery, (error, result) => {
       // console.log(info.id)
       if (error) return reject(error);
       resolve(result);
@@ -202,6 +224,7 @@ module.exports = {
   getAllHistory,
   setPaidOrder,
   getPaidOrder,
+  getAllPaidOrder,
   getPendingOrder,
   getCancelOrder,
   setCancelOrder

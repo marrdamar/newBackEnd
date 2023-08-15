@@ -117,6 +117,21 @@ const createTransactions = async (req, res) => {
     }
   };
 
+  const getAllPaidOrders = async (req, res) => {
+    try {
+      // const { authInfo } = req;
+      const result = await transactionsModel.getAllPaidOrder();
+      res.status(200).json({
+        data: result.rows,
+      });
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({
+        msg: "Internal Server Error...",
+      });
+    }
+  };
+
   const getPendingOrders = async (req, res) => {
     try {
       const { authInfo } = req;
@@ -171,6 +186,7 @@ module.exports = {
     getAllHistory,
     setPaidOrders,
     getPaidOrders,
+    getAllPaidOrders,
     getPendingOrders,
     getCanceledOrders,
     setCancelOrders
