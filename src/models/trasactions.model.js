@@ -122,14 +122,14 @@ const setPaidOrder = (info, query) => {
   return new Promise((resolve, reject) => {
     // statusId = ``
     let sqlQuery =
-      `UPDATE history SET status_id = $1, updated_at = NOW() WHERE id = $2 RETURNING *`;
+      `UPDATE history SET status_id = 2, updated_at = NOW() WHERE id = $1 RETURNING *`;
     // let params = ` `;
     // if (query.status === "paid") {
     //   params += `status_id = ${query.status}`
     // }
     // sqlQuery += `${params}`
     console.log(sqlQuery)
-    db.query(sqlQuery, [info.status_id], [info.id], (error, result) => {
+    db.query(sqlQuery, [info.id], (error, result) => {
       console.log(info.id)
       if (error) return reject(error);
       resolve(result);
