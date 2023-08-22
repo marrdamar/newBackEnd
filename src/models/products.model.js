@@ -231,10 +231,10 @@ const nextIdValue = () => {
 
 const getProductDetail = (params) => {
 	return new Promise((resolve, reject) => {
-		const sql = `SELECT p.id, p.names, p.prices, p.image, p.desc_product, pr.id, pr.title, pr.discount, c."category_name" as "category_name"
+		const sql = `SELECT p.id, p.names, p.prices, p.image, p.desc_product, pr.title, pr.discount, c."category_name" as "category_name"
 		FROM product p
-		JOIN categories c on p.categories_id = c.id
-		JOIN promo pr on p.id = pr.id
+		LEFT JOIN categories c on p.categories_id = c.id
+		LEFT JOIN promo pr on p.id = pr.id
 		WHERE p.id = $1`;
 		const values = [params.productId];
 
