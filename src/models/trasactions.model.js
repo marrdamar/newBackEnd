@@ -222,7 +222,7 @@ const setCancelOrder = (info) => {
 const deleteOrder = (info) => {
   return new Promise((resolve, reject) => {
     const sqlQuery =
-      "DELETE FROM m_transaction WHERE id = $1 RETURNING *";
+      "DELETE FROM history WHERE id = $1 RETURNING *";
     console.log(sqlQuery)
     db.query(sqlQuery, [info.id], (error, result) => {
       console.log(info.id)
