@@ -15,5 +15,6 @@ transactionRouter.get("/getallpaid", checkToken, transactionsController.getAllPa
 transactionRouter.get("/getpending", checkToken, transactionsController.getPendingOrders);
 transactionRouter.get("/getcancel", checkToken, transactionsController.getCanceledOrders);
 transactionRouter.patch("/cancel/:id", checkToken, transactionsController.setCancelOrders);
+transactionRouter.delete("/:id", checkToken, transactionsController.deleteOrders);
 
 module.exports = transactionRouter

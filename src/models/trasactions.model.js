@@ -71,7 +71,12 @@ const getTransactions = (client, transactionId, info) => {
 
 const getHistories = (info) => {
   return new Promise((resolve, reject) => {
-    let sqlQuery = `SELECT h.id, h.status_id, h.payment_id, d.method, pr.id, pr.discount, t.subtotal, t.created_at, t.product_id, t.sizes_id, p.names, p.prices, p.image FROM history h JOIN deliveries d ON d.id = h.deliveries_id JOIN m_transaction t ON t.history_id = h.id JOIN promo pr on t.product_id = pr.id JOIN product p ON p.id = t.product_id WHERE h.users_id = $1 `;
+    let sqlQuery = `SELECT h.id, h.status_id, h.payment_id, d.method, pr.id, pr.discount, t.subtotal, t.created_at, t.product_id, t.sizes_id, p.names, p.prices, p.image 
+    FROM history h 
+    JOIN deliveries d ON d.id = h.deliveries_id 
+    JOIN m_transaction t ON t.history_id = h.id 
+    JOIN promo pr on t.product_id = pr.id 
+    JOIN product p ON p.id = t.product_id WHERE h.users_id = $1 `;
     // let parameters = ` `;
     // if (query.status) {
     //   parameters += `AND h.status_id = ${query.status} `;
@@ -214,6 +219,19 @@ const setCancelOrder = (info) => {
   });
 };
 
+const deleteOrder = (info) => {
+  return new Promise((resolve, reject) => {
+    const sqlQuery =
+      "DELETE FROM m_transaction WHERE id = $1 RETURNING *";
+    console.log(sqlQuery)
+    db.query(sqlQuery, [info.id], (error, result) => {
+      console.log(info.id)
+      if (error) return reject(error);
+      resolve(result);
+    });
+  });
+};
+
 
 
 module.exports = {
@@ -227,5 +245,6 @@ module.exports = {
   getAllPaidOrder,
   getPendingOrder,
   getCancelOrder,
-  setCancelOrder
+  setCancelOrder,
+  deleteOrder,
 }
